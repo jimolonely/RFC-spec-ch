@@ -15,4 +15,81 @@ Hypertext Transfer Protocol(HTTP) 是应用层的协议，用在分布式、协�
 
 # 介绍
 
+## 1.1 目的
+
+第一版的HTTP/0.9协议，只是个简单的裸数据传输，HTTP/1.0允许数据以MIME格式传输。
+然而1.0没有考虑分层的代理、缓存、持久化连接或虚拟主机的影响，所以需要进化了。
+
+HTTP/1.1更加严格。
+
+应用需要除了检索外的更多功能，比如搜索，前后端更新和注释。
+HTTP开放式的method和header定义了请求的目的。在URI上构建，用URL或URN表名资源位置。
+
+HTTP也可用作通用协议，包括SMTP、NNTP、FTP、Gopher、WATS。
+
+## 1.2 规约
+
+"MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT","SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL"
+这些术语的定义要搞清楚。
+
+## 1.3 术语
+
+* connection（连接）
+    * 2个程序为了通信而建立的传输层的虚拟电路
+* message（消息）
+    * HTTP交流的基础单元，由第4章定义的结构化的字节序列，通过连接传输
+* request（请求）    
+    * 第5章定义，HTTP request message
+* response（响应）
+    * 第6章定义，HTTP response message
+* resource（资源）
+    * 可以用过URI确定的网络数据对象或服务，3.2节定义。资源可以有多种表征。
+* entity（实体）
+    * 一个request或response的传输负载，由entity-header和entity-body组成，第7章描述。
+* representation（表示）
+    * 包含在响应中的实体，需要进行内容协商，12章描述。对于一个响应状态，可能有多种表示。
+* content negotiation（内容协商）
+    * 请求时，选择合适的表示的机制，12章。任何响应中的实体表示都可被协商。
+* variant（变体）
+    * 一个资源在每个瞬间都可能有一个或多个表示，每个表示叫一个变体。
+* client（客户端）
+    * 为了发送请求而建立连接的程序
+* user agent（用户代理）
+    * 初始化请求的客户端，通常是浏览器、编辑器、爬虫或自定义工具。
+* server（服务端）
+    * 接收连接并响应请求的应用程序。很多程序既是客户端也是服务端，比如网关，代理，隧道等。
+* origin server（源服务器）
+    * 资源所存在或被创建的服务器
+* proxy（代理）
+    * 一个既是服务端又是客户端的程序，负责转发请求和响应。透明的代理不会修改请求和响应。
+* gateway（网关）
+    * 类似代理，区别是客户端感觉不到这是个代理，网关就像是原始服务器一样
+* tunnel（隧道）
+    * 在2个连接之间的传递，一旦激活，就不被认为是HTTP通信的一部分。当两边的连接关闭时，隧道也不存在了。
+* cache（缓存）
+    * 程序本地对响应资源的存储和控制、检索、删除。缓存存储可被缓存的响应来减少带宽，隧道不能有缓存。
+* cacheable（可被缓存）
+    * 在13章定义。
+* first-hand（一手）
+    * 对一个响应，没有经过代理等转发耽误的，直接从源服务器过来的响应
+* explicit expiration time（显示过期时间）
+    * 过期了就不能使用缓存了
+* heuristic expiration time（启发式过期时间） 
+    * 没有明确过期时间
+* age（年龄）
+    * 一个响应，从源服务器发出到现在的时间
+* freshness lifetime（生存时间）
+    * 一个响应，从产生到过期的时间
+* fresh（新鲜）
+    * age小于生存时间就是新鲜的响应
+* stale（过时）
+    * age大于生存时间
+* semantically transparent（语义上透明）
+    * 对缓存来说，缓存和服务器是一样的
+* validator（校验器）
+    * 一个元素（实体tag或Last-Modified时间）表名缓存是否合理
+* upstream/downstream(上下游)
+    * 数据的流向，总数从上往下
+* inbound/outbound（出入边界）
+    * 相对于源服务器来说，inbound就是收到请求，outbound就是响应请求
 
