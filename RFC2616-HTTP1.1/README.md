@@ -93,3 +93,40 @@ HTTP也可用作通用协议，包括SMTP、NNTP、FTP、Gopher、WATS。
 * inbound/outbound（出入边界）
     * 相对于源服务器来说，inbound就是收到请求，outbound就是响应请求
 
+## 1.4 整体运行
+
+请求响应协议：v（单个连接），UA（User Agent）， O（Origin Server）
+```shell script
+          request chain ------------------------>
+       UA -------------------v------------------- O
+          <----------------------- response chain
+```
+
+复杂点的请求：A(gateway)
+
+```shell script
+          request chain -------------------------------------->
+       UA -----v----- A -----v----- B -----v----- C -----v----- O
+          <------------------------------------- response chain
+```
+
+当B有缓存时：
+```shell script
+          request chain ---------->
+       UA -----v----- A -----v----- B - - - - - - C - - - - - - O
+          <--------- response chain
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
