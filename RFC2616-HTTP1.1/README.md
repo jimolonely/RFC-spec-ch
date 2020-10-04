@@ -117,6 +117,80 @@ HTTP也可用作通用协议，包括SMTP、NNTP、FTP、Gopher、WATS。
           <--------- response chain
 ```
 
+# 2.符号和语法说明
+
+## 2.1 增强的BNF（巴克斯洛尔范式）
+
+认识下面的范式：
+
+* name = definition 
+* "literal"
+    * 双引号文本，大小写不敏感    
+* rule1 | rule2
+    * 可选其一
+* (rule1 rule2)
+    * 表示单个元素
+* `*rule`
+    * 表示重复，`<n>*<m>element`表示n-m遍
+* `[rule]`
+    * 表示可选的元素
+* N rule
+    * 等价于 `<n>*<n>element`
+* `#rule`
+    * 表示可被逗号分开的多个元素
+* `; 注释`
+    * 逗号后面的注释
+* `implied *LWS`
+    * 就是任何单词之间是由制表符的（Linear white space）
+
+## 2.2 基础规则
+
+```shell script
+       OCTET          = <any 8-bit sequence of data>
+       CHAR           = <any US-ASCII character (octets 0 - 127)>
+       UPALPHA        = <any US-ASCII uppercase letter "A".."Z">
+       LOALPHA        = <any US-ASCII lowercase letter "a".."z">
+       ALPHA          = UPALPHA | LOALPHA
+       DIGIT          = <any US-ASCII digit "0".."9">
+       CTL            = <any US-ASCII control character
+                        (octets 0 - 31) and DEL (127)>
+       CR             = <US-ASCII CR, carriage return (13)>
+       LF             = <US-ASCII LF, linefeed (10)>
+       SP             = <US-ASCII SP, space (32)>
+       HT             = <US-ASCII HT, horizontal-tab (9)>
+       <">            = <US-ASCII double-quote mark (34)>
+```
+
+一些符号约定：
+
+```shell script
+CRLF           = CR LF
+
+LWS            = [CRLF] 1*( SP | HT )
+
+TEXT           = <any OCTET except CTLs,
+            but including LWS>
+
+HEX            = "A" | "B" | "C" | "D" | "E" | "F"
+              | "a" | "b" | "c" | "d" | "e" | "f" | DIGIT
+
+token          = 1*<any CHAR except CTLs or separators>
+separators     = "(" | ")" | "<" | ">" | "@"
+              | "," | ";" | ":" | "\" | <">
+              | "/" | "[" | "]" | "?" | "="
+              | "{" | "}" | SP | HT
+
+comment        = "(" *( ctext | quoted-pair | comment ) ")"
+ctext          = <any TEXT excluding "(" and ")">
+
+quoted-string  = ( <"> *(qdtext | quoted-pair ) <"> )
+qdtext         = <any TEXT except <">>
+
+quoted-pair    = "\" CHAR
+```
+
+
+
 
 
 
