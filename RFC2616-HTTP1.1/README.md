@@ -189,6 +189,60 @@ qdtext         = <any TEXT except <">>
 quoted-pair    = "\" CHAR
 ```
 
+# 3.协议参数
+
+## 3.1 协议版本
+
+HTTP的版本格式为： `<major>.<minor>`.
+
+* 当消息格式变化了，才升大版本
+* 增加功能时，只升小版本
+
+```shell script
+HTTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
+```
+
+HTTP/2.4 比 HTTP/2.13版本小。
+
+关于版本不会向下兼容，网关和代理一定不能在代理后升版本。
+
+## 3.2 统一资源定位符
+
+URI有很多名字：WWW地址，UDI，URI，URL，URN。
+
+对于HTTP来讲，只是通过名称、地址或其他字符来确定一个资源而已。
+
+### 3.2.1 通用语法
+
+URI可以是相对的和绝对的，具体参考[规范2396](https://tools.ietf.org/html/rfc2396)
+
+另外，当URI长度超过服务端能接收的范围，SHOULD返回414.
+
+### 3.2.2 http URL
+
+http的格式：
+
+```shell script
+http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
+```
+
+端口没给，默认80，尽量避免直接用IP。
+
+### 3.2.3 比较URI
+
+比较URI是否匹配时，应该用大小写敏感的字节对字节的比较，除了下面的例外：
+* 端口没写整默认的
+* 主机名一定是大小写不敏感的
+* abs_path为空等价于 "/"
+
+转义字符相等，例如：下面的URI都相等
+
+* http://abc.com:80/~smith/home.html
+* http://ABC.com/%7Esmith/home.html
+* http://ABC.com:/%7esmith/home.html
+
+## 3.3 Date/Time格式
+
 
 
 
