@@ -243,8 +243,209 @@ http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
 
 ## 3.3 Date/Time格式
 
+### 3.3.1 完整Date
 
+允许3种时间格式：
 
+* Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+* Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+* Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+
+所有HTTP时间都应该用GMT时间, 下面是其3种表示
+
+```shell script
+       HTTP-date    = rfc1123-date | rfc850-date | asctime-date
+       rfc1123-date = wkday "," SP date1 SP time SP "GMT"
+       rfc850-date  = weekday "," SP date2 SP time SP "GMT"
+       asctime-date = wkday SP date3 SP time SP 4DIGIT
+       date1        = 2DIGIT SP month SP 4DIGIT
+                      ; day month year (e.g., 02 Jun 1982)
+       date2        = 2DIGIT "-" month "-" 2DIGIT
+                      ; day-month-year (e.g., 02-Jun-82)
+       date3        = month SP ( 2DIGIT | ( SP 1DIGIT ))
+                      ; month day (e.g., Jun  2)
+       time         = 2DIGIT ":" 2DIGIT ":" 2DIGIT
+                      ; 00:00:00 - 23:59:59
+       wkday        = "Mon" | "Tue" | "Wed"
+                    | "Thu" | "Fri" | "Sat" | "Sun"
+       weekday      = "Monday" | "Tuesday" | "Wednesday"
+                    | "Thursday" | "Friday" | "Saturday" | "Sunday"
+       month        = "Jan" | "Feb" | "Mar" | "Apr"
+                    | "May" | "Jun" | "Jul" | "Aug"
+                    | "Sep" | "Oct" | "Nov" | "Dec"
+```
+
+### 3.3.2 增量秒
+
+```shell script
+delta-seconds  = 1*DIGIT
+```
+
+## 3.4 字符集
+
+token大小写不敏感
+```shell script
+charset = token
+```
+
+### 3.4.1 缺失字符集
+
+HTTP/1.0可能缺失charset，猜一个把。
+
+## 3.5 内容编码
+
+token大小写不敏感
+```shell script
+content-coding   = token
+```
+
+最开始由IANA注册的下面的编码：
+
+* gzip 
+    * LZ77, 32位CRC
+* compress
+    * LZW，未来会淘汰
+* deflate
+    * 参见[deflate压缩](https://tools.ietf.org/html/rfc1951)
+* identity
+    * 默认编码。用在Accept-Encoding头里，不应该用在Content-Encoding里
+
+## 3.6 传输编码
+
+传输编码是message的属性，而不是entity的。
+
+```shell script
+transfer-coding         = "chunked" | transfer-extension
+transfer-extension      = token *( ";" parameter )
+```
+
+参数：
+```shell script
+parameter               = attribute "=" value
+attribute               = token
+value                   = token | quoted-string
+```
+
+传输编码都是大小写不敏感的。也规定了以下的几种方式：
+
+* chunked
+* identity
+* gzip
+* compress
+* deflate
+
+服务器遇到不认识的传输编码需要返回501（没实现）。
+
+### 3.6.1 Chunked传输编码
+
+消息以序列的块传输，
+
+```shell script
+Chunked-Body   = *chunk
+                last-chunk
+                trailer
+                CRLF
+
+chunk          = chunk-size [ chunk-extension ] CRLF
+                chunk-data CRLF
+chunk-size     = 1*HEX
+last-chunk     = 1*("0") [ chunk-extension ] CRLF
+
+chunk-extension= *( ";" chunk-ext-name [ "=" chunk-ext-val ] )
+chunk-ext-name = token
+chunk-ext-val  = token | quoted-string
+chunk-data     = chunk-size(OCTET)
+trailer        = *(entity-header CRLF)
+```
+
+chunk-size是16进制表示大小，当为0时代表结束。
+
+只有出现以下情况时才能包含trailer内容：
+
+* request的TE header里指定了trailers可以接受
+*
+
+客户端需要能解码chunked，或者忽略不理解的编码。
+
+## 3.7 Media类型
+
+Content-Type里接收Media类型。
+
+```shell script
+media-type     = type "/" subtype *( ";" parameter )
+type           = token
+subtype        = token
+```
+
+### 3.7.1 规范化和默认文本
+
+在标准格式里，文本的media类型使用CRLF作为换行符。HTTP放松了以下这个规定，可以使用
+CR 或LF，同时允许自定义字节序列来作为行分隔符，当然，只针对entity-body，不对control结构（如header字段）。
+
+默认的charset是ISO-8859-1.
+
+### 3.7.2 Multipart类型
+
+将多个entity封装在一个message-body里。
+
+例如： "multipart/form-data" 专门用来在POST请求里承载表单数据。
+
+## 3.8 产品符号
+
+用来告诉应用自己软件的名字和版本。
+
+```shell script
+product         = token ["/" product-version]
+product-version = token
+```
+
+例如：
+
+```shell script
+User-Agent: CERN-LineMode/2.15 libwww/2.17b3
+Server: Apache/0.8.4
+```
+
+## 3.9 质量值
+
+使用浮点数来表示关联的重要性（权重），在0-1之间。
+
+```shell script
+qvalue         = ( "0" [ "." 0*3DIGIT ] )
+                  | ( "1" [ "." 0*3("0") ] )
+```
+
+## 3.10 语言Tag
+
+HTTP使用 Accept-Language和Content-Language
+
+语法如下:
+```shell script
+language-tag  = primary-tag *( "-" subtag )
+primary-tag   = 1*8ALPHA
+subtag        = 1*8ALPHA
+```
+例如： en, en-US, en-cockney, i-cherokee, x-pig-latin
+
+## 3.11 Entity Tag
+
+```shell script
+entity-tag = [ weak ] opaque-tag
+weak       = "W/"
+opaque-tag = quoted-string
+```
+
+## 3.12 Range Units
+
+请求一部分响应，Range和Content-Range。
+
+```shell script
+      range-unit       = bytes-unit | other-range-unit
+      bytes-unit       = "bytes"
+      other-range-unit = token
+```
+
+单位是byte。
 
 
 
