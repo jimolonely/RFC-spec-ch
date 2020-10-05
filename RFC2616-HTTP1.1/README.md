@@ -447,7 +447,65 @@ opaque-tag = quoted-string
 
 单位是byte。
 
+# 4.HTTP Message
 
+## 4.1 Message类型
+
+包括响应和请求
+
+```shell script
+HTTP-message   = Request | Response     ; HTTP/1.1 messages
+```
+
+它们都是下面的结构：
+
+```shell script
+generic-message = start-line
+                  *(message-header CRLF)
+                  CRLF
+                  [ message-body ]
+start-line      = Request-Line | Status-Line
+```
+
+## 4.2 Message Header
+
+HTTP的header包括：通用header，request header和response header，entity-header。
+
+header 的格式为：
+
+```shell script
+message-header = field-name ":" [ field-value ]
+field-name     = token
+field-value    = *( field-content | LWS )
+field-content  = <the OCTETs making up the field-value
+                and consisting of either *TEXT or combinations
+                of token, separators, and quoted-string>
+```
+
+## 4.3 Message Body
+
+```shell script
+message-body = entity-body
+                | <entity-body encoded as per Transfer-Encoding>
+```
+
+1xx（信息提示）, 204(没有content)，304（not modified）响应不包含 message-body。
+
+## 4.4 Message Length
+
+## 4.5 通用Header字段
+
+```shell script
+       general-header = Cache-Control            ; Section 14.9
+                      | Connection               ; Section 14.10
+                      | Date                     ; Section 14.18
+                      | Pragma                   ; Section 14.32
+                      | Trailer                  ; Section 14.40
+                      | Transfer-Encoding        ; Section 14.41
+                      | Upgrade                  ; Section 14.42
+                      | Via                      ; Section 14.45
+                      | Warning                  ; Section 14.46
+```
 
 
 
