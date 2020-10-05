@@ -507,8 +507,68 @@ message-body = entity-body
                       | Warning                  ; Section 14.46
 ```
 
+# 5.Request
 
+```shell script
+Request       = Request-Line              ; Section 5.1
+                *(( general-header        ; Section 4.5
+                 | request-header         ; Section 5.3
+                 | entity-header ) CRLF)  ; Section 7.1
+                CRLF
+                [ message-body ]          ; Section 4.3
+```
 
+## 5.1 Request-Line
+
+```shell script
+Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
+```
+
+## 5.1.1 Method
+
+```shell script
+Method        = "OPTIONS"                ; Section 9.2
+              | "GET"                    ; Section 9.3
+              | "HEAD"                   ; Section 9.4
+              | "POST"                   ; Section 9.5
+              | "PUT"                    ; Section 9.6
+              | "DELETE"                 ; Section 9.7
+              | "TRACE"                  ; Section 9.8
+              | "CONNECT"                ; Section 9.9
+              | extension-method
+extension-method = token
+```
+
+不匹配的请求方法，服务器应该返回405（Method Not Allowed）；
+对于已知，但是服务器没实现返回501（Not Implemented）
+
+## 5.1.2 Request-URI
+
+```shell script
+Request-URI    = "*" | absoluteURI | abs_path | authority
+```
+
+`*` 代表不请求任何资源，例如：
+
+```shell script
+OPTIONS * HTTP/1.1
+```
+
+absoluteURI一般是发给代理：
+```shell script
+GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1
+```
+
+authority 只用在 CONNECT方法。
+
+最常用的还是 abs_path, 用来请求源服务器或网关：
+
+```shell script
+GET /pub/WWW/TheProject.html HTTP/1.1
+Host: www.w3.org
+```
+
+## 5.2 
 
 
 
