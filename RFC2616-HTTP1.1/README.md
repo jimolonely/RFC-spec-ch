@@ -568,7 +568,12 @@ GET /pub/WWW/TheProject.html HTTP/1.1
 Host: www.w3.org
 ```
 
-## 5.2 
+## 5.2 Request里的Resource
+
+
+由URI和header共同决定。
+
+
 
 
 
