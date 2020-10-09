@@ -571,7 +571,38 @@ Host: www.w3.org
 ## 5.2 Request里的Resource
 
 
-由URI和header共同决定。
+由URI和header共同决定。规则如下：
+
+* 如果Request-URI是absoluteURI，且主机在URI里，那么header里的host字段忽略
+* 如果Request-URI不是absoluteURI，那么主机由header里的host字段决定
+* 如果1，2条件出来的不是合法的host，返回400
+
+## 5.3 Request Header字段
+
+包括请求和客户端本身的信息。
+
+```shell script
+request-header = Accept                  ; Section 14.1
+              | Accept-Charset           ; Section 14.2
+              | Accept-Encoding          ; Section 14.3
+              | Accept-Language          ; Section 14.4
+              | Authorization            ; Section 14.8
+              | Expect                   ; Section 14.20
+              | From                     ; Section 14.22
+              | Host                     ; Section 14.23
+              | If-Match                 ; Section 14.24
+              | If-Modified-Since        ; Section 14.25
+              | If-None-Match            ; Section 14.26
+              | If-Range                 ; Section 14.27
+              | If-Unmodified-Since      ; Section 14.28
+              | Max-Forwards             ; Section 14.31
+              | Proxy-Authorization      ; Section 14.34
+              | Range                    ; Section 14.35
+              | Referer                  ; Section 14.36
+              | TE                       ; Section 14.39
+              | User-Agent               ; Section 14.43
+```
+
 
 
 
