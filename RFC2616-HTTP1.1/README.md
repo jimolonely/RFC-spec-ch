@@ -705,7 +705,49 @@ response-header = Accept-Ranges          ; Section 14.5
                | WWW-Authenticate        ; Section 14.47
 ```
 
+# 7.Entity
 
+Request或Response的message传输的就是entity，entity由entity-header和entity-body组成，可能只有entity-header。
+
+## 7.1 Entity Header字段
+
+```shell script
+entity-header  = Allow                    ; Section 14.7
+              | Content-Encoding         ; Section 14.11
+              | Content-Language         ; Section 14.12
+              | Content-Length           ; Section 14.13
+              | Content-Location         ; Section 14.14
+              | Content-MD5              ; Section 14.15
+              | Content-Range            ; Section 14.16
+              | Content-Type             ; Section 14.17
+              | Expires                  ; Section 14.21
+              | Last-Modified            ; Section 14.29
+              | extension-header
+
+extension-header = message-header
+```
+
+## 7.2 Entity Body
+
+格式如下
+
+```shell script
+entity-body    = *OCTET
+```
+
+### 7.2.1 Type
+
+2层结构定义的内容：
+
+```shell script
+entity-body := Content-Encoding( Content-Type( data ) )
+```
+
+如果media type是未知的，那么当作 application/octet-stream 处理
+
+### 7.2.2 Entity Length
+
+这个长度是transfer-encoding应用前的长度。4.4节定义了message-body的长度。
 
 
 
